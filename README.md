@@ -15,7 +15,7 @@ OLED screen.
 ## Wiring
 
 On many ESP32 DevKitV1 boards these pins are printed as `D17`, `D16`, `D21`,
-and `D22`. Some boards only print the number, like `17` or `21`.
+and `D22`. 
 
 | ESP32 pin | Connects to | Notes |
 | --- | --- | --- |
