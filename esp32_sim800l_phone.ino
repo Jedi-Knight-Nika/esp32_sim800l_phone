@@ -24,6 +24,12 @@ static const int PIN_SCL = 22;    // D22 / SCL -> OLED SCL
 static const int PIN_POWER_BUTTON = 18; // D18 -> button to GND
 static const int PIN_BUZZER = 23;       // D23 -> buzzer positive
 
+// ATmega64A terminal link (Serial1) on freed keypad pins.
+static const int PIN_LINK_RX = 26; // D26 <- ATmega TX (5V -> 3.3V, level shift)
+static const int PIN_LINK_TX = 27; // D27 -> ATmega RX
+static const uint32_t LINK_BAUD = 9600;
+#define LINK Serial1
+
 static const byte KEYPAD_ROWS = 4;
 static const byte KEYPAD_COLS = 3;
 static const int KEYPAD_ROW_PINS[KEYPAD_ROWS] = {13, 14, 27, 26};
@@ -149,6 +155,16 @@ void ringBeep();
 void enterState(PhoneState next);
 void redrawState();
 void updateNetworkStatus();
+void linkBegin();
+void linkPoll();
+void lcdShow(const String &line1, const String &line2);
+void lcdBeep(char code);
+void lcdPower(bool on);
+void lcdRenderState();
+char linkPopKey();
+bool consumeCardTap();
+void bootPhone();
+void shutdownPhone();
 
 // Arduino
 // ---------------------------------------------------------------------------
@@ -160,6 +176,7 @@ void setup() {
   pinMode(PIN_POWER_BUTTON, INPUT_PULLUP);
   pinMode(PIN_BUZZER, OUTPUT);
   setupKeypad();
+  linkBegin();
 
   Wire.begin(PIN_SDA, PIN_SCL);
   displayReady = display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
@@ -177,6 +194,14 @@ void setup() {
 void loop() {
   handlePowerButton();
   pollSerialDebug();
+
+  linkPoll();
+  if (consumeCardTap()) {
+    if (state == ST_OFF)
+      bootPhone();
+    else
+      shutdownPhone();
+  }
 
   if (state == ST_OFF || state == ST_BOOTING || state == ST_POWERING_OFF)
     return;

@@ -70,6 +70,9 @@ void showCentered(const String &top, const String &middle,
   display.setCursor(0, 52);
   display.print(bottom);
   display.display();
+
+  // Mirror the transient screen to the ATmega LCD (2 lines).
+  lcdShow(top, middle.length() ? middle : bottom);
 }
 
 void showHome() {
@@ -294,4 +297,7 @@ void redrawState() {
   default:
     break;
   }
+
+  // Mirror the same state to the ATmega LCD.
+  lcdRenderState();
 }

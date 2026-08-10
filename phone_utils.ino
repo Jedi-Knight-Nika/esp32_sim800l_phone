@@ -16,15 +16,20 @@ void beep(int frequency, int durationMs) {
   tone(PIN_BUZZER, frequency, durationMs);
 }
 
-void keyBeep() { beep(2400, 25); }
+void keyBeep() {
+  lcdBeep('k');
+  beep(2400, 25);
+}
 
 void smsBeep() {
+  lcdBeep('s');
   beep(1800, 80);
   delay(80);
   beep(2200, 80);
 }
 
 void ringBeep() {
+  lcdBeep('r');
   beep(1200, 180);
   delay(80);
   beep(1500, 180);

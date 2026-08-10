@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------------------
 void bootPhone() {
   oledOn();
+  lcdPower(true);
   enterState(ST_BOOTING);
   showCentered("ESP32 GSM", "BOOT", "Starting modem");
   beep(1800, 80);
@@ -42,6 +43,7 @@ void shutdownPhone() {
     simCommand("AT+CFUN=0", 1000);
   enterState(ST_OFF);
   oledOff();
+  lcdPower(false);
 }
 
 void handlePowerButton() {

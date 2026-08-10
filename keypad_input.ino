@@ -29,6 +29,12 @@ char scanRawKeypad() {
 }
 
 char getKeyPress() {
+  // Keys now arrive from the ATmega terminal over the link; the local matrix
+  // scan stays as a fallback for bench testing without the terminal.
+  char linkKey = linkPopKey();
+  if (linkKey)
+    return linkKey;
+
   char raw = scanRawKeypad();
   unsigned long now = millis();
 
